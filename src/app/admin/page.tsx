@@ -1,89 +1,110 @@
 'use client';
-import React, { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { SubmitHandler, useForm } from 'react-hook-form';
+
+type FormInput = {
+  title: string;
+  imageUrl: string;
+  description: string;
+  slug: string;
+  id: string;
+  adminSecret: string;
+  appxCourseId: string;
+  discordRoleId: string;
+};
 
 export default function Courses() {
-  const [title, setTitle] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [description, setDescription] = useState('');
-  const [slug, setSlug] = useState('');
-  const [id, setId] = useState('');
-  const [adminSecret, setAdminSecret] = useState('');
-  const [appxCourseId, setAppxCourseId] = useState('');
-  const [discordRoleId, setIdDiscordRoleId] = useState('');
+  const { register, handleSubmit } = useForm<FormInput>();
+
+  const onSubmit: SubmitHandler<FormInput> = async (data) => {
+    console.log(data);
+    await fetch('/api/admin/course', {
+      body: JSON.stringify(data),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  };
 
   return (
-    <div className="max-w-screen-xl justify-between mx-auto p-4 cursor-pointer grid grid-cols-1 gap-5 md:grid-cols-3">
-      Admin dashboard Create a new course
-      <input
-        className="text-black"
-        type="text"
-        placeholder="Course name"
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <input
-        className="text-black"
-        type="text"
-        placeholder="Image url"
-        onChange={(e) => setImageUrl(e.target.value)}
-      />
-      <input
-        className="text-black"
-        type="text"
-        placeholder="Description"
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <input
-        className="text-black"
-        type="text"
-        placeholder="slug"
-        onChange={(e) => setSlug(e.target.value)}
-      />
-      <input
-        className="text-black"
-        type="text"
-        placeholder="id"
-        onChange={(e) => setId(e.target.value)}
-      />
-      <input
-        className="text-black"
-        type="text"
-        placeholder="adminSecret"
-        onChange={(e) => setAdminSecret(e.target.value)}
-      />
-      <input
-        className="text-black"
-        type="text"
-        placeholder="appx course id"
-        onChange={(e) => setAppxCourseId(e.target.value)}
-      />
-      <input
-        className="text-black"
-        type="text"
-        placeholder="dicourd id"
-        onChange={(e) => setIdDiscordRoleId(e.target.value)}
-      />
-      <button
-        onClick={async () => {
-          await fetch('/api/admin/course', {
-            body: JSON.stringify({
-              id,
-              title,
-              imageUrl,
-              description,
-              slug,
-              adminSecret,
-              appxCourseId,
-              discordRoleId,
-            }),
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-        }}
-      >
-        Create
-      </button>
-    </div>
+    <Card className="lg:mt-10 w-full max-w-6xl mx-auto overflow-y-auto">
+      <CardHeader>
+        <CardTitle>Create a new course</CardTitle>
+        <CardDescription>Fill in the course details below</CardDescription>
+      </CardHeader>
+      <CardContent className="p-4 pt-0 grid gap-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid gap-3.5 md:grid-cols-2"
+        >
+          <Input
+            id="name"
+            placeholder="Enter the course name"
+            required
+            {...register('title', { required: true })}
+          />
+          <Input
+            id="image"
+            placeholder="Enter the image URL"
+            required
+            {...register('imageUrl', {
+              required: true,
+              pattern: /^http[^\\?]*.(jpg|jpeg|gif|png|tiff|bmp)(\?(.*))?$/gim,
+            })}
+          />
+          <Textarea
+            className="md:col-span-2"
+            id="description"
+            placeholder="Enter the course description"
+            required
+            {...register('description', { required: true })}
+          />
+          <Input
+            id="slug"
+            placeholder="Enter the course slug"
+            required
+            {...register('slug', { required: true })}
+          />
+          <Input
+            id="id"
+            placeholder="Enter the course ID"
+            required
+            {...register('id', { required: true })}
+          />
+          <Input
+            id="admin-secret"
+            placeholder="Enter the admin secret"
+            required
+            {...register('adminSecret', { required: true })}
+          />
+          <Input
+            id="appx-course-id"
+            placeholder="Enter the appx course ID"
+            required
+            {...register('appxCourseId', { required: true })}
+          />
+          <Input
+            id="discord-id"
+            placeholder="Enter the Discord ID"
+            required
+            {...register('discordRoleId', { required: true })}
+          />
+          <div className="flex flex-1 w-full justify-center">
+            <Button type="submit">Create</Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
