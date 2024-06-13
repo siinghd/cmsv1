@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Folder } from '@/db/course';
+import { FullCourseContent } from '@/db/course';
 import { Button } from './ui/button';
 import { BackArrow } from '@/icons/BackArrow';
 import { useRecoilState } from 'recoil';
@@ -14,15 +14,15 @@ import { sidebarOpen as sidebarOpenAtom } from '@/store/atoms/sidebar';
 import { useEffect, useState } from 'react';
 import { handleMarkAsCompleted } from '@/lib/utils';
 import BookmarkButton from './bookmark/BookmarkButton';
+import Link from 'next/link';
 
 export function Sidebar({
   courseId,
   fullCourseContent,
 }: {
-  fullCourseContent: Folder[];
+  fullCourseContent: FullCourseContent[];
   courseId: string;
 }) {
-  const router = useRouter();
   const pathName = usePathname();
 
   const [sidebarOpen, setSidebarOpen] = useRecoilState(sidebarOpenAtom);
@@ -46,7 +46,7 @@ export function Sidebar({
       }
       const pathArray = findPathToContent(
         fullCourseContent,
-        currentUrlContentId,
+        currentUrlContentId!,
       );
       setCurrentActiveContentIds(pathArray);
     }
@@ -59,9 +59,9 @@ export function Sidebar({
   }, []);
 
   const findPathToContent = (
-    contents: any,
-    targetId: any,
-    currentPath: any[] = [],
+    contents: FullCourseContent[],
+    targetId: number,
+    currentPath: number[] = [],
   ): any => {
     for (const content of contents) {
       const newPath = [...currentPath, content.id];
@@ -86,12 +86,13 @@ export function Sidebar({
     const pathArray = findPathToContent(fullCourseContent, contentId);
     if (pathArray) {
       const path = `/courses/${courseId}/${pathArray.join('/')}`;
-      router.push(path);
+      return path;
     }
+    return null;
   };
 
-  const renderContent = (contents: any) => {
-    return contents.map((content: any) => {
+  const renderContent = (contents: FullCourseContent[]) => {
+    return contents.map((content) => {
       const isActiveContent = currentActiveContentIds?.some(
         (id) => content.id === id,
       );
@@ -112,23 +113,21 @@ export function Sidebar({
             </AccordionTrigger>
             <AccordionContent className="p-0 m-0">
               {/* Render the children of this folder */}
-              {renderContent(content.children)}
+              {renderContent(content.children ?? [])}
             </AccordionContent>
           </AccordionItem>
         );
       }
       // This is a video or a content item without children
       return (
-        <div
+        <Link
           key={content.id}
+          href={navigateToContent(content.id) || '#'}
           className={`p-2 flex border-b hover:bg-gray-200 cursor-pointer ${
             isActiveContent
               ? 'dark:bg-gray-700 bg-gray-300 dark:text-white text-black dark:hover:bg-gray-500'
               : 'bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white text-black'
           }`}
-          onClick={() => {
-            navigateToContent(content.id);
-          }}
         >
           <div className="flex justify-between w-full">
             <div className="flex">
@@ -141,7 +140,7 @@ export function Sidebar({
             {content.type === 'video' ? (
               <div className="flex items-center gap-1">
                 <BookmarkButton
-                  bookmark={content.bookmark}
+                  bookmark={content.bookmark ?? null}
                   contentId={content.id}
                 />
                 <div className="flex flex-col justify-center ml-2">
@@ -150,7 +149,7 @@ export function Sidebar({
               </div>
             ) : null}
           </div>
-        </div>
+        </Link>
       );
     });
   };
@@ -160,7 +159,7 @@ export function Sidebar({
   }
 
   return (
-    <div className="overflow-y-scroll h-sidebar bg-gray-50 dark:bg-gray-800 cursor-pointer absolute top-[64px] self-start w-full z-20 xs:min-w-[133px] xs:w-[300px] xs:w-84 xs:sticky">
+    <div className="overflow-y-scroll h-sidebar w-[300px] min-w-[300px] bg-gray-50 dark:bg-gray-800 cursor-pointer sticky top-[64px] self-start w-84">
       <div className="flex">
         {/* <ToggleButton
             onClick={() => {

@@ -1,65 +1,52 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Certificate, Course, User } from '@prisma/client';
+import { useGenerateCertificate } from '@/hooks/useCertGen';
 
 export const CertificateVerify = ({
   certificate,
 }: {
   certificate: Certificate & { user: User; course: Course };
 }) => {
-  const [imageUrl, setImageUrl] = useState('');
-
-  useEffect(() => {
-    const generateImage = async () => {
-      try {
-        const response = await fetch(
-          `/api/certificate/get?certificateId=${certificate.id}&userName=${certificate.user.name || ''}`,
-        );
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        setImageUrl(url);
-      } catch (error) {
-        console.error('Error generating image:', error);
-      }
-    };
-    if (!imageUrl) generateImage();
-  }, []);
+  const { certificateImageUrl } = useGenerateCertificate({
+    certificateDetails: {
+      certificateId: certificate.id,
+      course: certificate.course,
+      certificateSlug: certificate.slug,
+    },
+    userName: certificate.user.name as string,
+  });
 
   return (
     <div>
-      <Card className="w-500 my-4 flex">
-        <CardContent className="flex-none mr-4 w-1/2">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt="Generated Certificate"
-              className="w-full h-auto"
-            />
-          ) : (
-            'Loading...'
-          )}
-        </CardContent>
+      <h1 className="text-4xl text-center py-4">100x Devs Certificate</h1>
+      <div className="flex justify-center pb-20 mx-10">
+        <Card className="my-4">
+          <CardContent className="flex-none w-[90vw] max-w-[800px]">
+            {certificateImageUrl ? (
+              <img
+                src={certificateImageUrl}
+                alt="Generated Certificate"
+                className="w-full h-auto"
+              />
+            ) : (
+              <div className="min-h-[500px] flex justify-center items-center">
+                Loading...
+              </div>
+            )}
+          </CardContent>
 
-        <div className="flex-grow">
-          <CardHeader>
-            <CardTitle>
-              This Certificate was issued to {certificate.user.name} for
-              completing {certificate.course.title}
-            </CardTitle>
-            <CardDescription>
-              Course Description: {certificate.course.description}
-            </CardDescription>
-          </CardHeader>
-        </div>
-      </Card>
+          <div className="flex justify-center">
+            <CardHeader>
+              <CardTitle>
+                This Certificate was issued to {certificate.user.name} for
+                completing {certificate.course.title}
+              </CardTitle>
+            </CardHeader>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };

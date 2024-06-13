@@ -1,4 +1,4 @@
-import { Folder } from '@/db/course';
+import { FullCourseContent } from '@/db/course';
 import { ContentRenderer } from './admin/ContentRenderer';
 import { FolderView } from './FolderView';
 import { NotionRenderer } from './NotionRenderer';
@@ -17,7 +17,7 @@ export const CourseView = ({
   searchParams,
   possiblePath,
 }: {
-  fullCourseContent: Folder[];
+  fullCourseContent: FullCourseContent[];
   rest: string[];
   course: any;
   courseContent: any;
@@ -60,6 +60,7 @@ export const CourseView = ({
         <Comments
           content={{
             id: courseContent[0]?.id || 0,
+            courseId: courseContent[0]?.parentId || 0,
             commentCount: courseContent[0]?.commentsCount || 0,
             possiblePath,
           }}
