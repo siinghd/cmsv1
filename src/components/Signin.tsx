@@ -24,6 +24,7 @@ const Signin = () => {
   const password = useRef('');
 
   const handleSubmit = async (e?: React.FormEvent<HTMLButtonElement>) => {
+    const loadId = toast.loading('Signing in...');
     if (e) {
       e.preventDefault();
     }
@@ -33,6 +34,7 @@ const Signin = () => {
         emailReq: email.current ? false : true,
         passReq: password.current ? false : true,
       });
+      toast.dismiss(loadId);
       return;
     }
     setCheckingPassword(true);
@@ -42,6 +44,7 @@ const Signin = () => {
       redirect: false,
     });
 
+    toast.dismiss(loadId);
     if (!res?.error) {
       router.push('/');
       toast.success('Signed In');
@@ -51,8 +54,8 @@ const Signin = () => {
     }
   };
   return (
-    <section className="flex items-center justify-center h-screen">
-      <Card className="w-[70%] mx-auto md:w-[70%] lg:w-[30%] ">
+    <section className="flex h-screen items-center justify-center">
+      <Card className="mx-auto w-[70%] md:w-[70%] lg:w-[30%]">
         <CardHeader>
           <CardTitle>Signin to your Account</CardTitle>
         </CardHeader>
@@ -73,12 +76,12 @@ const Signin = () => {
                 }}
               />
               {requiredError.emailReq && (
-                <span className=" text-red-500">Email is required</span>
+                <span className="text-red-500">Email is required</span>
               )}
             </div>
-            <div className="flex flex-col gap-4 relative">
+            <div className="relative flex flex-col gap-4">
               <Label>Password</Label>
-              <div className="flex border rounded-lg">
+              <div className="flex rounded-lg border">
                 <Input
                   className="border-0"
                   name="password"
@@ -100,7 +103,7 @@ const Signin = () => {
                   }}
                 />
                 <button
-                  className="right-0 flex items-center px-4 text-gray-600 absolute bottom-0 h-10"
+                  className="absolute bottom-0 right-0 flex h-10 items-center px-4 text-gray-600"
                   onClick={togglePasswordVisibility}
                 >
                   {isPasswordVisible ? (
@@ -110,7 +113,7 @@ const Signin = () => {
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="w-5 h-5"
+                      className="h-5 w-5"
                     >
                       <path
                         strokeLinecap="round"
@@ -125,7 +128,7 @@ const Signin = () => {
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="w-5 h-5"
+                      className="h-5 w-5"
                     >
                       <path
                         strokeLinecap="round"
@@ -142,7 +145,7 @@ const Signin = () => {
                 </button>
               </div>
               {requiredError.passReq && (
-                <span className=" text-red-500">Password is required</span>
+                <span className="text-red-500">Password is required</span>
               )}
             </div>
           </div>
