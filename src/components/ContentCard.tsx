@@ -1,19 +1,17 @@
-import { CheckCircle2 } from 'lucide-react';
-import PercentageComplete from './PercentageComplete';
+import { CheckCircle2, Play } from 'lucide-react';
 import { Bookmark } from '@prisma/client';
 import BookmarkButton from './bookmark/BookmarkButton';
 import { formatTime } from '@/lib/utils';
 import VideoThumbnail from './videothumbnail';
 import CardComponent from './CardComponent';
+import { motion } from 'framer-motion';
 
 export const ContentCard = ({
   title,
   onClick,
   markAsCompleted,
-  percentComplete,
   type,
   videoProgressPercent,
-  hoverExpand = true,
   bookmark,
   contentId,
   contentDuration,
@@ -26,35 +24,32 @@ export const ContentCard = ({
   markAsCompleted?: boolean;
   percentComplete?: number | null;
   videoProgressPercent?: number;
-  hoverExpand?: boolean;
   bookmark?: Bookmark | null;
   contentDuration?: number;
+  uploadDate?: string;
 }) => {
-  // let image ;
-  // image = ""
-
   return (
-    <div
+    <motion.div
       onClick={onClick}
-      className={`relative cursor-pointer duration-200 ease-in group${hoverExpand ? ' ' : ''} `}
+      className={`group relative flex h-fit w-full max-w-md cursor-pointer flex-col gap-2 rounded-2xl transition-all duration-300 hover:-translate-y-2`}
     >
-      {percentComplete !== null && percentComplete !== undefined && (
-        <PercentageComplete percent={percentComplete} />
-      )}
       {markAsCompleted && (
         <div className="absolute right-2 top-2 z-10">
           <CheckCircle2 color="green" size={30} fill="lightgreen" />
         </div>
       )}
       {type === 'video' && (
-        <div className="text-blue-900g absolute bottom-12 right-2 z-10 rounded-md bg-zinc-900 p-1 px-2 font-semibold text-white">
-          {contentDuration && formatTime(contentDuration)}
+        <div className="absolute bottom-12 right-2 z-10 rounded-md p-2 font-semibold text-white">
+          <Play className="size-6" />
         </div>
       )}
       {type !== 'video' && (
         <div className="relative overflow-hidden rounded-md">
-          <CardComponent title={title} type={type} />
-          {/* <img src={image} alt={title} className="" /> */}
+          <CardComponent
+            title={title}
+            contentDuration={contentDuration && formatTime(contentDuration)}
+            type={type}
+          />
           {!!videoProgressPercent && (
             <div className="absolute bottom-0 h-1 w-full bg-[#707071]">
               <div
@@ -66,7 +61,7 @@ export const ContentCard = ({
         </div>
       )}
       {type === 'video' && (
-        <div className="relative overflow-hidden rounded-md">
+        <div className="relative overflow-hidden">
           <VideoThumbnail
             title={title}
             contentId={contentId ?? 0}
@@ -77,21 +72,20 @@ export const ContentCard = ({
           />
         </div>
       )}
-
-      {bookmark !== undefined && contentId && (
-        <div className="absolute left-2 top-2">
+      <div className="flex items-center justify-between gap-4">
+        <h3 className="w-full truncate text-xl font-bold capitalize tracking-tighter md:text-2xl">
+          {title}
+        </h3>
+        {bookmark !== undefined && contentId && (
           <BookmarkButton
             bookmark={bookmark}
             contentId={contentId}
-            size={28}
-            align="start"
-            side="bottom"
+            size={24}
+            align="end"
+            side="top"
           />
-        </div>
-      )}
-      <div className="mt-2 flex justify-between text-gray-900 dark:text-white">
-        <div>{title} </div>
+        )}
       </div>
-    </div>
+    </motion.div>
   );
 };
