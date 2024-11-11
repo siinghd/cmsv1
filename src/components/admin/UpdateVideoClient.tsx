@@ -6,7 +6,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from '@/components/ui/accordion';
 import { FileText, Video } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
@@ -35,23 +35,28 @@ export const UpdateVideoClient = ({
   const [pdfLink, setPdfLink] = useState('');
   const [vttLink, setVttLink] = useState('');
 
+  const [adminPassword, setAdminPassword] = useState('');
   return (
-    <div className='max-w-7xl mx-auto px-4'>
-
-      <Accordion defaultValue='m3u8-mp4' className='border-2 p-4 rounded-2xl' type="single" collapsible>
-        <AccordionItem value="m3u8-mp4" >
-          <AccordionTrigger className='p-6 text-lg lg:text-2xl font-bold'>
-            <div className='flex gap-4 flex-col' >
+    <div className="mx-auto max-w-7xl px-4">
+      <Accordion
+        defaultValue="m3u8-mp4"
+        className="rounded-2xl border-2 p-4"
+        type="single"
+        collapsible
+      >
+        <AccordionItem value="m3u8-mp4">
+          <AccordionTrigger className="p-6 text-lg font-bold lg:text-2xl">
+            <div className="flex flex-col gap-4">
               <Video size={40} /> M3U8 and MP4 Links
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <div className='grid grid-cols-1 p-6 lg:grid-cols-7 w-full gap-4'>
-              <aside className='col-span-1 lg:col-span-3'>
-                <p className='text-lg'>Add Links</p>
+            <div className="grid w-full grid-cols-1 gap-4 p-6 lg:grid-cols-7">
+              <aside className="col-span-1 lg:col-span-3">
+                <p className="text-lg">Add Links</p>
               </aside>
 
-              <aside className='col-span-1 flex flex-col gap-4 lg:col-span-4'>
+              <aside className="col-span-1 flex flex-col gap-4 lg:col-span-4">
                 <Label>M3U8 Links</Label>
                 <Input
                   value={link1080}
@@ -80,7 +85,7 @@ export const UpdateVideoClient = ({
                   placeholder={'m3u8 360p'}
                 />
 
-                <Label className='mt-4'>MP4 Links</Label>
+                <Label className="mt-4">MP4 Links</Label>
 
                 <Input
                   value={link1080_mp4}
@@ -108,10 +113,17 @@ export const UpdateVideoClient = ({
                   }}
                   placeholder={'m3u8 360p'}
                 />
+                <Label className="mt-4">Admin Password</Label>
+                <Input
+                  type="text"
+                  placeholder="Admin password"
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                />
                 <Button
-                  className="my-4 rounded  p-2 font-bold text-white w-full lg:w-[20%]"
+                  className="my-4 w-full rounded p-2 font-bold text-white lg:w-[20%]"
                   onClick={async () => {
                     await axios.post('/api/admin/updatecontent', {
+                      adminPassword,
                       contentId: content.id,
                       updates: {
                         video_360p: link360,
@@ -132,18 +144,18 @@ export const UpdateVideoClient = ({
         </AccordionItem>
 
         <AccordionItem value="slides">
-          <AccordionTrigger className='p-6 text-lg lg:text-2xl font-bold'>
-            <div className='flex gap-4 flex-col' >
+          <AccordionTrigger className="p-6 text-lg font-bold lg:text-2xl">
+            <div className="flex flex-col gap-4">
               <FileText size={40} /> Slides Links
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <div className='grid grid-cols-1  p-6 lg:grid-cols-7 w-full gap-4'>
-              <aside className='col-span-1 lg:col-span-3'>
-                <p className='text-lg'>Add Links</p>
+            <div className="grid w-full grid-cols-1 gap-4 p-6 lg:grid-cols-7">
+              <aside className="col-span-1 lg:col-span-3">
+                <p className="text-lg">Add Links</p>
               </aside>
 
-              <aside className='col-span-1 flex flex-col gap-4 lg:col-span-4'>
+              <aside className="col-span-1 flex flex-col gap-4 lg:col-span-4">
                 <Input
                   value={pdfLink}
                   type="text"
@@ -152,10 +164,16 @@ export const UpdateVideoClient = ({
                   }}
                   placeholder={'pdf link'}
                 />
+                <Input
+                  type="text"
+                  placeholder="Admin password"
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                />
                 <Button
-                  className="my-4 rounded p-2 font-bold text-white w-full lg:w-[20%]"
+                  className="my-4 w-full rounded p-2 font-bold text-white lg:w-[20%]"
                   onClick={async () => {
                     await axios.post('/api/admin/contentmetadata', {
+                      adminPassword,
                       contentId: content.id,
                       updates: {
                         slides: pdfLink,
@@ -169,19 +187,19 @@ export const UpdateVideoClient = ({
             </div>
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem className='border-none' value="vtt">
-          <AccordionTrigger className='p-6 text-lg lg:text-2xl font-bold'>
-            <div className='flex gap-4 flex-col' >
+        <AccordionItem className="border-none" value="vtt">
+          <AccordionTrigger className="p-6 text-lg font-bold lg:text-2xl">
+            <div className="flex flex-col gap-4">
               <FileText size={40} /> VTT Link
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <div className='grid grid-cols-1 p-6 lg:grid-cols-7 w-full gap-4'>
-              <aside className='col-span-1 lg:col-span-3'>
-                <p className='text-lg'>Add Links</p>
+            <div className="grid w-full grid-cols-1 gap-4 p-6 lg:grid-cols-7">
+              <aside className="col-span-1 lg:col-span-3">
+                <p className="text-lg">Add Links</p>
               </aside>
 
-              <aside className='col-span-1 lg:col-span-4'>
+              <aside className="col-span-1 lg:col-span-4">
                 <Input
                   value={vttLink}
                   type="text"
@@ -190,10 +208,17 @@ export const UpdateVideoClient = ({
                   }}
                   placeholder={'vtt link'}
                 />
+                <Input
+                  type="text"
+                  placeholder="Admin password"
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  className="my-3"
+                />
                 <Button
-                  className="my-4 rounded  p-2 font-bold text-white w-full lg:w-[20%]"
+                  className="my-4 w-full rounded p-2 font-bold text-white lg:w-[20%]"
                   onClick={async () => {
                     await axios.post('/api/admin/contentmetadata', {
+                      adminPassword,
                       contentId: content.id,
                       updates: {
                         subtitles: vttLink,
@@ -208,7 +233,6 @@ export const UpdateVideoClient = ({
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-
     </div>
   );
 };
